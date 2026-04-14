@@ -1,93 +1,130 @@
-import Link from "next/link";
-import { PageShell } from "@/components/shared/page-shell";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { mockTeamMembers } from "@/data/mock-data";
-import { SITE_CONFIG } from "@/lib/site-config";
+import Link from 'next/link'
+import { ArrowRight, Cog, ShieldCheck, Truck, Wrench } from 'lucide-react'
+import { MarketingPageShell } from '@/components/shared/marketing-page-shell'
+import { Button } from '@/components/ui/button'
+import { SITE_CONFIG } from '@/lib/site-config'
 
-const highlights = [
-  { label: "Creators onboarded", value: "12k+" },
-  { label: "Bookmarks shared", value: "180k" },
-  { label: "Listings published", value: "8.6k" },
-];
+const pillars = [
+  {
+    icon: Cog,
+    title: 'Parts you can trust',
+    body: 'We focus on verified suppliers, clear fitment notes, and honest availability so you spend less time guessing and more time turning wrenches.',
+  },
+  {
+    icon: Truck,
+    title: 'Built for busy shops',
+    body: 'Fast search, structured listings, and straightforward contact paths help independent garages and fleet teams get quotes without chasing dead ends.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Clarity first',
+    body: 'Specs, warranties, and return expectations belong in plain language. Our directory is designed to surface that context up front.',
+  },
+]
 
-const values = [
-  { title: "Curated by people", description: "We believe trusted recommendations beat endless feeds." },
-  { title: "Designed for focus", description: "Clear, calm UI helps you find the next best resource fast." },
-  { title: "Built to share", description: "Collections make collaboration and knowledge flow effortless." },
-];
+const milestones = [
+  { year: '2018', label: 'DLK launched', detail: 'Started as a regional parts sourcing desk for independent repair shops.' },
+  { year: '2021', label: 'Digital directory', detail: 'Moved inventory and partner profiles online with a single, searchable catalog experience.' },
+  { year: '2024', label: 'Nationwide partners', detail: 'Expanded verified seller coverage while keeping local pickup and delivery options visible.' },
+  { year: '2026', label: 'Today', detail: 'One platform for discovery, comparison, and direct outreach—still tuned for real-world shop workflows.' },
+]
+
+const stats = [
+  { value: '12k+', label: 'SKU families indexed' },
+  { value: '480+', label: 'Verified seller profiles' },
+  { value: '24h', label: 'Typical quote response goal' },
+]
 
 export default function AboutPage() {
   return (
-    <PageShell
-      title={`About ${SITE_CONFIG.name}`}
-      description={`${SITE_CONFIG.name} is a modern platform for creators, communities, and curated business discovery.`}
+    <MarketingPageShell
+      eyebrow="About DLK"
+      title={`${SITE_CONFIG.name} connects shops with the right parts, faster.`}
+      description={`We are an auto parts discovery platform built around precision, speed, and transparency. Whether you run a single bay or a multi-location operation, ${SITE_CONFIG.name} helps you find compatible components and trusted suppliers without the noise of a generic marketplace.`}
       actions={
         <>
-          <Button variant="outline" asChild>
-            <Link href="/team">Meet the Team</Link>
+          <Button className="rounded-full bg-[#DB1A1A] text-white hover:bg-[#c41515]" asChild>
+            <Link href="/listings">
+              Browse listings
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
-          <Button asChild>
-            <Link href="/contact">Contact Us</Link>
+          <Button variant="outline" className="rounded-full border-[#8CC7C4]/50 bg-white text-[#2C687B] hover:bg-[#8CC7C4]/15" asChild>
+            <Link href="/contact">Talk with us</Link>
           </Button>
         </>
       }
     >
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="border-border bg-card">
-          <CardContent className="space-y-4 p-6">
-            <Badge variant="secondary">Our Story</Badge>
-            <h2 className="text-2xl font-semibold text-foreground">
-              A single home for knowledge, discovery, and community.
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {SITE_CONFIG.name} brings together publishing, listings, and social bookmarking so teams can move faster
-              and keep their best resources close.
-            </p>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {highlights.map((item) => (
-                <div key={item.label} className="rounded-lg border border-border bg-secondary/40 p-4">
-                  <div className="text-2xl font-semibold text-foreground">{item.value}</div>
-                  <div className="text-xs text-muted-foreground">{item.label}</div>
-                </div>
-              ))}
+      <section className="grid gap-6 lg:grid-cols-3">
+        {pillars.map((item) => (
+          <div
+            key={item.title}
+            className="rounded-[1.75rem] border border-[#8CC7C4]/35 bg-white p-7 shadow-[0_20px_50px_rgba(44,104,123,0.06)]"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#8CC7C4]/20 text-[#2C687B]">
+              <item.icon className="h-6 w-6" />
             </div>
-          </CardContent>
-        </Card>
+            <h2 className="mt-5 text-xl font-semibold">{item.title}</h2>
+            <p className="mt-3 text-sm leading-7 text-[#2C687B]/78">{item.body}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="mt-14 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div className="rounded-[2rem] border border-[#8CC7C4]/35 bg-[linear-gradient(145deg,#ffffff_0%,#f5fcfb_100%)] p-8 sm:p-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#DB1A1A]">How we work</p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em]">Engineering-minded service, human support.</h2>
+          <p className="mt-5 text-sm leading-8 text-[#2C687B]/78">
+            Behind the catalog is a team that speaks both diagnostics and supply chain. We collaborate with distributors, remanufacturers, and specialty
+            vendors to keep listings accurate—because the best part is the one that fits the first time.
+          </p>
+          <ul className="mt-8 space-y-4 text-sm leading-7 text-[#2C687B]/85">
+            <li className="flex gap-3">
+              <Wrench className="mt-0.5 h-5 w-5 shrink-0 text-[#DB1A1A]" />
+              <span>Technical editors review high-risk categories (braking, steering, emissions) for common supersession and interchange notes.</span>
+            </li>
+            <li className="flex gap-3">
+              <Truck className="mt-0.5 h-5 w-5 shrink-0 text-[#DB1A1A]" />
+              <span>Fulfillment options—ship, will-call, and local route delivery—are surfaced per listing when partners provide them.</span>
+            </li>
+            <li className="flex gap-3">
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#DB1A1A]" />
+              <span>Dispute and warranty escalations route through documented channels so buyers and sellers share the same playbook.</span>
+            </li>
+          </ul>
+        </div>
         <div className="space-y-4">
-          {values.map((value) => (
-            <Card key={value.title} className="border-border bg-card">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-foreground">{value.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{value.description}</p>
-              </CardContent>
-            </Card>
+          {milestones.map((m) => (
+            <div key={m.year} className="flex gap-5 rounded-2xl border border-[#8CC7C4]/30 bg-white p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#DB1A1A] text-sm font-bold text-white">{m.year}</span>
+              <div>
+                <p className="font-semibold">{m.label}</p>
+                <p className="mt-1 text-sm text-[#2C687B]/75">{m.detail}</p>
+              </div>
+            </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
-        {mockTeamMembers.map((member) => (
-          <Card key={member.id} className="border-border bg-card transition-transform hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={member.avatar} alt={member.name} />
-                  <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{member.name}</p>
-                  <p className="text-xs text-muted-foreground">{member.role}</p>
-                </div>
-              </div>
-              <p className="mt-3 text-sm text-muted-foreground">{member.bio}</p>
-              <p className="mt-3 text-xs text-muted-foreground">{member.location}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </PageShell>
-  );
+      <section className="mt-14 rounded-[2rem] border border-[#8CC7C4]/35 bg-white p-8 sm:p-10">
+        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#DB1A1A]">Snapshot</p>
+            <h2 className="mt-3 text-2xl font-semibold">Numbers that reflect real usage—not vanity metrics.</h2>
+          </div>
+          <Button variant="outline" className="w-fit rounded-full border-[#8CC7C4]/50" asChild>
+            <Link href="/help">Read the help center</Link>
+          </Button>
+        </div>
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {stats.map((s) => (
+            <div key={s.label} className="rounded-2xl bg-[#FFF6F6] px-6 py-8 text-center">
+              <p className="text-3xl font-semibold text-[#DB1A1A]">{s.value}</p>
+              <p className="mt-2 text-sm text-[#2C687B]/75">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </MarketingPageShell>
+  )
 }

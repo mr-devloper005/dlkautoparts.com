@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { FileText, Building2, LayoutGrid, Tag, Github, Twitter, Linkedin, Image as ImageIcon, User } from 'lucide-react'
+import { FileText, Building2, LayoutGrid, Tag, Github, Twitter, Linkedin, Image as ImageIcon, User, ArrowRight, Sparkles } from 'lucide-react'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { siteContent } from '@/config/site.content'
+import { getFactoryState } from '@/design/factory/get-factory-state'
 
 const taskIcons: Record<TaskKey, any> = {
   article: FileText,
@@ -17,19 +18,17 @@ const taskIcons: Record<TaskKey, any> = {
 }
 
 const footerLinks = {
-  platform: SITE_CONFIG.tasks
-    .filter((task) => task.enabled)
-    .map((task) => ({
-      name: task.label,
-      href: task.route,
-      icon: taskIcons[task.key] || LayoutGrid,
-    })),
+  platform: SITE_CONFIG.tasks.filter((task) => task.enabled).map((task) => ({
+    name: task.label,
+    href: task.route,
+    icon: taskIcons[task.key] || LayoutGrid,
+  })),
   company: [
     { name: 'About', href: '/about' },
-    { name: 'Team', href: '/team' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Press', href: '/press' },
+    { name: 'Contact us', href: '/contact' },
+    { name: 'Terms', href: '/terms' },
+    { name: 'Privacy policy', href: '/privacy' },
+    { name: 'Help', href: '/help' },
   ],
   resources: [
     { name: 'Help Center', href: '/help' },
@@ -52,104 +51,151 @@ const socialLinks = [
 ]
 
 export function Footer() {
+  const { recipe } = getFactoryState()
+  const enabledTasks = SITE_CONFIG.tasks.filter((task) => task.enabled)
+  const primaryTask = enabledTasks.find((task) => task.key === recipe.primaryTask) || enabledTasks[0]
+
+  if (recipe.footer === 'minimal-footer') {
+    return (
+      <footer className="border-t border-[#8CC7C4]/35 bg-[#FFF6F6] text-[#2C687B]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-8 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div>
+            <p className="text-lg font-semibold">{SITE_CONFIG.name}</p>
+            <p className="mt-1 text-sm text-[#2C687B]/75">{SITE_CONFIG.description}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {footerLinks.company.map((item) => (
+              <Link key={item.href} href={item.href} className="rounded-lg border border-[#8CC7C4]/35 bg-white px-3 py-2 text-sm font-medium text-[#2C687B] hover:bg-[#8CC7C4]/12">
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </footer>
+    )
+  }
+
+  if (recipe.footer === 'dense-footer') {
+    return (
+      <footer className="border-t border-[#8CC7C4]/35 bg-[linear-gradient(180deg,#2C687B_0%,#245a6b_100%)] text-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr_1fr]">
+            <div className="rounded-[2rem] border border-[#8CC7C4]/30 bg-white/10 p-7">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-white/8 p-1.5">
+                  <img src="/favicon.png?v=20260414" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold">{SITE_CONFIG.name}</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{siteContent.footer.tagline}</p>
+                </div>
+              </div>
+              <p className="mt-5 max-w-md text-sm leading-7 text-white/85">{SITE_CONFIG.description}</p>
+              {primaryTask ? (
+                <Link href={primaryTask.route} className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#DB1A1A] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#c41515]">
+                  Explore {primaryTask.label}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : null}
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-3">
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-[#8CC7C4]">Surfaces</h3>
+                <ul className="mt-4 space-y-3 text-sm text-white/90">
+                  {footerLinks.platform.map((item: any) => (
+                    <li key={item.name}><Link href={item.href} className="flex items-center gap-2 hover:text-white">{item.icon ? <item.icon className="h-4 w-4" /> : null}{item.name}</Link></li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-[#8CC7C4]">Resources</h3>
+                <ul className="mt-4 space-y-3 text-sm text-white/90">
+                  {footerLinks.resources.map((item) => (
+                    <li key={item.name}><Link href={item.href} className="hover:text-white">{item.name}</Link></li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-[#8CC7C4]">Connect</h3>
+                <div className="mt-4 flex gap-3">
+                  {socialLinks.map((item) => (
+                    <Link key={item.name} href={item.href} target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/20 bg-white/10 p-2.5 text-white/90 hover:bg-white/18 hover:text-white">
+                      <item.icon className="h-4 w-4" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-10 border-t border-white/15 pt-5 text-sm text-white/70">&copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.</div>
+        </div>
+      </footer>
+    )
+  }
+
+  if (recipe.footer === 'editorial-footer') {
+    return (
+      <footer className="border-t border-[#8CC7C4]/35 bg-[linear-gradient(180deg,#FFF6F6_0%,#f5fcfb_100%)] text-[#2C687B]">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#8CC7C4]/40 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#2C687B]/75">
+                <Sparkles className="h-3.5 w-3.5" />
+                Editorial desk
+              </div>
+              <h3 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">{SITE_CONFIG.name}</h3>
+              <p className="mt-4 max-w-md text-sm leading-7 text-[#2C687B]/75">{SITE_CONFIG.description}</p>
+            </div>
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.24em] text-[#2C687B]/65">Sections</h4>
+              <ul className="mt-4 space-y-3 text-sm">
+                {footerLinks.platform.map((item: any) => (
+                  <li key={item.name}><Link href={item.href} className="hover:text-[#DB1A1A]">{item.name}</Link></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.24em] text-[#2C687B]/65">Site</h4>
+              <ul className="mt-4 space-y-3 text-sm">
+                {footerLinks.company.map((item) => (
+                  <li key={item.name}><Link href={item.href} className="hover:text-[#DB1A1A]">{item.name}</Link></li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    )
+  }
+
   return (
-    <footer className="border-t border-[rgba(110,26,55,0.12)] bg-[linear-gradient(180deg,rgba(248,242,233,0.7),rgba(255,250,244,0.98))]">
+    <footer className="border-t border-[#8CC7C4]/35 bg-[linear-gradient(180deg,#FFF6F6_0%,#ffffff_100%)] text-[#2C687B]">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <div className="h-11 w-11 overflow-hidden rounded-full border border-[rgba(110,26,55,0.14)] bg-white p-1 shadow-sm">
-                <img
-                  src="/favicon.png?v=20260401"
-                  alt={`${SITE_CONFIG.name} logo`}
-                  width="44"
-                  height="44"
-                  className="h-full w-full object-contain"
-                />
+              <div className="h-11 w-11 overflow-hidden rounded-2xl border border-[#8CC7C4]/35 bg-white p-1 shadow-sm">
+                <img src="/favicon.png?v=20260414" alt={`${SITE_CONFIG.name} logo`} width="44" height="44" className="h-full w-full object-contain" />
               </div>
               <div>
-                <span className="block text-lg font-semibold text-[#34141f]">{SITE_CONFIG.name}</span>
-                <span className="text-xs uppercase tracking-[0.22em] text-[#8b6770]">{siteContent.footer.tagline}</span>
+                <span className="block text-lg font-semibold">{SITE_CONFIG.name}</span>
+                <span className="text-xs uppercase tracking-[0.22em] text-[#2C687B]/60">{siteContent.footer.tagline}</span>
               </div>
             </Link>
-            <p className="mt-5 max-w-sm text-sm leading-7 text-[#70545d]">
-              {SITE_CONFIG.description}
-            </p>
-            <div className="mt-6 flex gap-3">
-              {socialLinks.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="rounded-full border border-[rgba(110,26,55,0.12)] bg-white/70 p-2.5 text-[#7b5f66] transition hover:border-[rgba(110,26,55,0.18)] hover:bg-white hover:text-[#6e1a37]"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span className="sr-only">{item.name}</span>
-                </Link>
-              ))}
+            <p className="mt-5 max-w-sm text-sm leading-7 text-[#2C687B]/75">{SITE_CONFIG.description}</p>
+          </div>
+          {(['platform', 'company', 'resources', 'legal'] as const).map((section) => (
+            <div key={section}>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#2C687B]/55">{section}</h3>
+              <ul className="mt-5 space-y-3 text-sm text-[#2C687B]/80">
+                {footerLinks[section].map((item: any) => (
+                  <li key={item.name}><Link href={item.href} className="flex items-center gap-2 hover:text-[#DB1A1A]">{item.icon ? <item.icon className="h-4 w-4" /> : null}{item.name}</Link></li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#4a202d]">Platform</h3>
-            <ul className="mt-5 space-y-3">
-              {footerLinks.platform.map((item) => (
-                <li key={item.name}>
-                  <Link href={item.href} className="flex items-center gap-2 text-sm text-[#70545d] transition hover:text-[#8f1f3f]">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#4a202d]">Company</h3>
-            <ul className="mt-5 space-y-3">
-              {footerLinks.company.map((item) => (
-                <li key={item.name}>
-                  <Link href={item.href} className="text-sm text-[#70545d] transition hover:text-[#8f1f3f]">
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#4a202d]">Resources</h3>
-            <ul className="mt-5 space-y-3">
-              {footerLinks.resources.map((item) => (
-                <li key={item.name}>
-                  <Link href={item.href} className="text-sm text-[#70545d] transition hover:text-[#8f1f3f]">
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#4a202d]">Legal</h3>
-            <ul className="mt-5 space-y-3">
-              {footerLinks.legal.map((item) => (
-                <li key={item.name}>
-                  <Link href={item.href} className="text-sm text-[#70545d] transition hover:text-[#8f1f3f]">
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          ))}
         </div>
-
-        <div className="mt-12 border-t border-[rgba(110,26,55,0.12)] pt-6">
-          <p className="text-center text-sm text-[#7b5f66]">
-            &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
-          </p>
-        </div>
+        <div className="mt-12 border-t border-[#8CC7C4]/25 pt-6 text-center text-sm text-[#2C687B]/60">&copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.</div>
       </div>
     </footer>
   )
