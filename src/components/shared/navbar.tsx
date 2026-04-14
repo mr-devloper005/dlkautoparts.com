@@ -4,13 +4,14 @@ import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus } from 'lucide-react'
+import { Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
 import { siteContent } from '@/config/site.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
+import { SiteSearchForm } from '@/components/shared/site-search-form'
 
 const NavbarAuthControls = dynamic(() => import('@/components/shared/navbar-auth-controls').then((mod) => mod.NavbarAuthControls), {
   ssr: false,
@@ -32,59 +33,67 @@ const taskIcons: Record<TaskKey, any> = {
 
 const variantClasses = {
   'compact-bar': {
-    shell: 'border-b border-slate-200/80 bg-white/88 text-slate-950 backdrop-blur-xl',
-    logo: 'rounded-2xl border border-slate-200 bg-white shadow-sm',
-    active: 'bg-slate-950 text-white',
-    idle: 'text-slate-600 hover:bg-slate-100 hover:text-slate-950',
-    cta: 'rounded-full bg-slate-950 text-white hover:bg-slate-800',
-    mobile: 'border-t border-slate-200/70 bg-white/95',
+    shell: 'border-b border-[#8CC7C4]/35 bg-[#FFF6F6]/92 text-[#2C687B] backdrop-blur-xl',
+    logo: 'rounded-2xl border border-[#8CC7C4]/35 bg-white shadow-sm',
+    active: 'bg-[#DB1A1A] text-white',
+    idle: 'text-[#2C687B]/80 hover:bg-[#8CC7C4]/15 hover:text-[#DB1A1A]',
+    cta: 'rounded-full bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+    mobile: 'border-t border-[#8CC7C4]/30 bg-[#FFF6F6]',
   },
   'editorial-bar': {
-    shell: 'border-b border-[#d7c4b3] bg-[#fff7ee]/90 text-[#2f1d16] backdrop-blur-xl',
-    logo: 'rounded-full border border-[#dbc6b6] bg-white shadow-sm',
-    active: 'bg-[#2f1d16] text-[#fff4e4]',
-    idle: 'text-[#72594a] hover:bg-[#f2e5d4] hover:text-[#2f1d16]',
-    cta: 'rounded-full bg-[#2f1d16] text-[#fff4e4] hover:bg-[#452920]',
-    mobile: 'border-t border-[#dbc6b6] bg-[#fff7ee]',
+    shell: 'border-b border-[#8CC7C4]/35 bg-[#FFF6F6]/94 text-[#2C687B] backdrop-blur-xl',
+    logo: 'rounded-full border border-[#8CC7C4]/35 bg-white shadow-sm',
+    active: 'bg-[#DB1A1A] text-white',
+    idle: 'text-[#2C687B]/75 hover:bg-[#8CC7C4]/15 hover:text-[#DB1A1A]',
+    cta: 'rounded-full bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+    mobile: 'border-t border-[#8CC7C4]/30 bg-[#FFF6F6]',
   },
   'floating-bar': {
-    shell: 'border-b border-transparent bg-transparent text-white',
-    logo: 'rounded-[1.35rem] border border-white/12 bg-white/8 shadow-[0_16px_48px_rgba(15,23,42,0.22)] backdrop-blur',
-    active: 'bg-[#8df0c8] text-[#07111f]',
-    idle: 'text-slate-200 hover:bg-white/10 hover:text-white',
-    cta: 'rounded-full bg-[#8df0c8] text-[#07111f] hover:bg-[#77dfb8]',
-    mobile: 'border-t border-white/10 bg-[#09101d]/96',
+    shell: 'border-b border-[#2C687B]/25 bg-[#2C687B] text-white',
+    logo: 'rounded-[1.35rem] border border-[#8CC7C4]/40 bg-[#2C687B]/90 shadow-[0_16px_48px_rgba(44,104,123,0.25)] backdrop-blur',
+    active: 'bg-[#DB1A1A] text-white',
+    idle: 'text-white/85 hover:bg-white/10 hover:text-white',
+    cta: 'rounded-full bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+    mobile: 'border-t border-[#2C687B] bg-[#2C687B]',
   },
   'utility-bar': {
-    shell: 'border-b border-[#d7deca] bg-[#f4f6ef]/94 text-[#1f2617] backdrop-blur-xl',
-    logo: 'rounded-xl border border-[#d7deca] bg-white shadow-sm',
-    active: 'bg-[#1f2617] text-[#edf5dc]',
-    idle: 'text-[#56604b] hover:bg-[#e7edd9] hover:text-[#1f2617]',
-    cta: 'rounded-lg bg-[#1f2617] text-[#edf5dc] hover:bg-[#2f3a24]',
-    mobile: 'border-t border-[#d7deca] bg-[#f4f6ef]',
+    shell: 'border-b border-[#8CC7C4]/35 bg-[#FFF6F6]/94 text-[#2C687B] backdrop-blur-xl',
+    logo: 'rounded-xl border border-[#8CC7C4]/35 bg-white shadow-sm',
+    active: 'bg-[#DB1A1A] text-white',
+    idle: 'text-[#2C687B]/80 hover:bg-[#8CC7C4]/15 hover:text-[#DB1A1A]',
+    cta: 'rounded-lg bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+    mobile: 'border-t border-[#8CC7C4]/30 bg-[#FFF6F6]',
   },
 } as const
 
 const directoryPalette = {
   'directory-clean': {
-    shell: 'border-b border-slate-200 bg-white/94 text-slate-950 shadow-[0_1px_0_rgba(15,23,42,0.04)] backdrop-blur-xl',
-    logo: 'rounded-2xl border border-slate-200 bg-slate-50',
-    nav: 'text-slate-600 hover:text-slate-950',
-    search: 'border border-slate-200 bg-slate-50 text-slate-600',
-    cta: 'bg-slate-950 text-white hover:bg-slate-800',
-    post: 'border border-slate-200 bg-white text-slate-950 hover:bg-slate-50',
-    mobile: 'border-t border-slate-200 bg-white',
+    shell: 'border-b border-[#8CC7C4]/35 bg-[#FFF6F6]/95 text-[#2C687B] shadow-[0_1px_0_rgba(44,104,123,0.06)] backdrop-blur-xl',
+    logo: 'rounded-2xl border border-[#8CC7C4]/35 bg-white',
+    nav: 'text-[#2C687B]/80 hover:text-[#DB1A1A]',
+    search: 'border border-[#8CC7C4]/40 bg-white text-[#2C687B]',
+    cta: 'bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+    post: 'border border-[#8CC7C4]/35 bg-white text-[#2C687B] hover:bg-[#8CC7C4]/12',
+    mobile: 'border-t border-[#8CC7C4]/30 bg-[#FFF6F6]',
   },
   'market-utility': {
-    shell: 'border-b border-[#d7deca] bg-[#f4f6ef]/96 text-[#1f2617] shadow-[0_1px_0_rgba(64,76,34,0.06)] backdrop-blur-xl',
-    logo: 'rounded-xl border border-[#d7deca] bg-white',
-    nav: 'text-[#56604b] hover:text-[#1f2617]',
-    search: 'border border-[#d7deca] bg-white text-[#56604b]',
-    cta: 'bg-[#1f2617] text-[#edf5dc] hover:bg-[#2f3a24]',
-    post: 'border border-[#d7deca] bg-white text-[#1f2617] hover:bg-[#eef2e4]',
-    mobile: 'border-t border-[#d7deca] bg-[#f4f6ef]',
+    shell: 'border-b border-[#8CC7C4]/35 bg-[#FFF6F6]/96 text-[#2C687B] shadow-[0_1px_0_rgba(44,104,123,0.06)] backdrop-blur-xl',
+    logo: 'rounded-xl border border-[#8CC7C4]/35 bg-white',
+    nav: 'text-[#2C687B]/80 hover:text-[#DB1A1A]',
+    search: 'border border-[#8CC7C4]/40 bg-white text-[#2C687B]',
+    cta: 'bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+    post: 'border border-[#8CC7C4]/35 bg-white text-[#2C687B] hover:bg-[#8CC7C4]/14',
+    mobile: 'border-t border-[#8CC7C4]/30 bg-[#FFF6F6]',
   },
 } as const
+
+const staticNavLinks = [
+  { name: 'About', href: '/about' },
+  { name: 'Contact', href: '/contact' },
+  { name: 'Terms', href: '/terms' },
+  { name: 'Privacy', href: '/privacy' },
+  { name: 'Help', href: '/help' },
+] as const
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -99,7 +108,6 @@ export function Navbar() {
     href: task.route,
     icon: taskIcons[task.key] || LayoutGrid,
   }))
-  const primaryTask = SITE_CONFIG.tasks.find((task) => task.key === recipe.primaryTask && task.enabled) || primaryNavigation[0]
   const isDirectoryProduct = recipe.homeLayout === 'listing-home' || recipe.homeLayout === 'classified-home'
 
   if (isDirectoryProduct) {
@@ -111,7 +119,7 @@ export function Navbar() {
           <div className="flex min-w-0 items-center gap-4">
             <Link href="/" className="flex shrink-0 items-center gap-3">
               <div className={cn('flex h-12 w-12 items-center justify-center overflow-hidden p-1.5', palette.logo)}>
-                <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+                <img src="/favicon.png?v=20260414" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
               </div>
               <div className="min-w-0 hidden sm:block">
                 <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
@@ -123,45 +131,43 @@ export function Navbar() {
               {primaryNavigation.slice(0, 4).map((task) => {
                 const isActive = pathname.startsWith(task.route)
                 return (
-                  <Link key={task.key} href={task.route} className={cn('text-sm font-semibold transition-colors', isActive ? 'text-foreground' : palette.nav)}>
+                  <Link key={task.key} href={task.route} className={cn('text-sm font-semibold transition-colors', isActive ? 'text-[#DB1A1A]' : palette.nav)}>
                     {task.label}
                   </Link>
                 )
               })}
             </div>
+            <div className="hidden items-center gap-3 lg:flex">
+              {staticNavLinks.map((item) => (
+                <Link key={item.href} href={item.href} className="text-xs font-semibold text-[#2C687B]/70 transition-colors hover:text-[#DB1A1A]">
+                  {item.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
-            <div className={cn('flex w-full max-w-xl items-center gap-3 rounded-full px-4 py-3', palette.search)}>
-              <Search className="h-4 w-4" />
-              <span className="text-sm">Find businesses, spaces, and local services</span>
-              <div className="ml-auto hidden items-center gap-1 text-xs opacity-75 md:flex">
-                <MapPin className="h-3.5 w-3.5" />
-                Local discovery
-              </div>
+            <div className={cn('flex w-full max-w-xl items-center gap-2 rounded-full px-3 py-2.5', palette.search)}>
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-[#8CC7C4]" aria-hidden />
+              <SiteSearchForm
+                showSubmitButton={false}
+                placeholder="Find businesses, spaces, and local services"
+                className="min-w-0"
+                inputClassName="py-0.5"
+              />
             </div>
           </div>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            {primaryTask ? (
-              <Link href={primaryTask.route} className="hidden items-center gap-2 rounded-full border border-current/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] opacity-75 md:inline-flex">
-                <Sparkles className="h-3.5 w-3.5" />
-                {primaryTask.label}
-              </Link>
-            ) : null}
-
             {isAuthenticated ? (
               <NavbarAuthControls />
             ) : (
               <div className="hidden items-center gap-2 md:flex">
-                <Button variant="ghost" size="sm" asChild className="rounded-full px-4">
+                <Button variant="ghost" size="sm" asChild className="rounded-full px-4 text-[#2C687B] hover:bg-[#8CC7C4]/15 hover:text-[#DB1A1A]">
                   <Link href="/login">Sign In</Link>
                 </Button>
                 <Button size="sm" asChild className={cn('rounded-full', palette.cta)}>
-                  <Link href="/register">
-                    <Plus className="mr-1 h-4 w-4" />
-                    Add Listing
-                  </Link>
+                  <Link href="/register">Get Started</Link>
                 </Button>
               </div>
             )}
@@ -175,9 +181,20 @@ export function Navbar() {
         {isMobileMenuOpen && (
           <div className={palette.mobile}>
             <div className="space-y-2 px-4 py-4">
-              <div className={cn('mb-3 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium', palette.search)}>
-                <Search className="h-4 w-4" />
-                Find businesses, spaces, and services
+              <div className={cn('mb-3 rounded-2xl px-3 py-3', palette.search)}>
+                <SiteSearchForm showSubmitButton placeholder="Search listings and more" onNavigate={() => setIsMobileMenuOpen(false)} />
+              </div>
+              <div className="flex flex-wrap gap-2 px-1 pb-2">
+                {staticNavLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="rounded-full border border-[#8CC7C4]/35 bg-white px-3 py-1.5 text-xs font-semibold text-[#2C687B]"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
               </div>
               {mobileNavigation.map((item) => {
                 const isActive = pathname.startsWith(item.href)
@@ -206,7 +223,7 @@ export function Navbar() {
         <div className="flex min-w-0 flex-1 items-center gap-4 lg:gap-7">
           <Link href="/" className="flex shrink-0 items-center gap-3 whitespace-nowrap pr-2">
             <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden p-1.5', style.logo)}>
-              <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+              <img src="/favicon.png?v=20260414" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
             </div>
             <div className="min-w-0 hidden sm:block">
               <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
@@ -216,16 +233,16 @@ export function Navbar() {
 
           {isEditorial ? (
             <div className="hidden min-w-0 flex-1 items-center gap-4 xl:flex">
-              <div className="h-px flex-1 bg-[#d8c8bb]" />
+              <div className="h-px flex-1 bg-[#8CC7C4]/35" />
               {primaryNavigation.map((task) => {
                 const isActive = pathname.startsWith(task.route)
                 return (
-                  <Link key={task.key} href={task.route} className={cn('text-sm font-semibold uppercase tracking-[0.18em] transition-colors', isActive ? 'text-[#2f1d16]' : 'text-[#7b6254] hover:text-[#2f1d16]')}>
+                  <Link key={task.key} href={task.route} className={cn('text-sm font-semibold uppercase tracking-[0.18em] transition-colors', isActive ? 'text-[#DB1A1A]' : 'text-[#2C687B]/75 hover:text-[#DB1A1A]')}>
                     {task.label}
                   </Link>
                 )
               })}
-              <div className="h-px flex-1 bg-[#d8c8bb]" />
+              <div className="h-px flex-1 bg-[#8CC7C4]/35" />
             </div>
           ) : isFloating ? (
             <div className="hidden min-w-0 flex-1 items-center gap-2 xl:flex">
@@ -267,21 +284,30 @@ export function Navbar() {
           )}
         </div>
 
+        <div className="hidden min-w-0 max-w-md flex-1 items-center justify-center px-2 md:flex">
+          <div
+            className={cn(
+              'flex w-full items-center rounded-full border border-[#8CC7C4]/35 px-3 py-2',
+              isFloating ? 'border-white/25 bg-white/10' : 'bg-white/90'
+            )}
+          >
+            <SiteSearchForm
+              showSubmitButton={false}
+              placeholder={siteContent.hero.searchPlaceholder}
+              className={cn(isFloating && '[&_input]:text-white [&_input]:placeholder:text-white/55 [&_span]:text-white/70')}
+            />
+          </div>
+        </div>
+
+        <div className="hidden shrink-0 items-center gap-2 xl:flex">
+          {staticNavLinks.map((item) => (
+            <Link key={item.href} href={item.href} className="text-[11px] font-semibold text-[#2C687B]/70 hover:text-[#DB1A1A]">
+              {item.name}
+            </Link>
+          ))}
+        </div>
+
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          {primaryTask && (recipe.navbar === 'utility-bar' || recipe.navbar === 'floating-bar') ? (
-            <Link href={primaryTask.route} className="hidden items-center gap-2 rounded-full border border-current/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] opacity-80 md:inline-flex">
-              <Sparkles className="h-3.5 w-3.5" />
-              {primaryTask.label}
-            </Link>
-          ) : null}
-
-          <Button variant="ghost" size="icon" asChild className="hidden rounded-full md:flex">
-            <Link href="/search">
-              <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
-            </Link>
-          </Button>
-
           {isAuthenticated ? (
             <NavbarAuthControls />
           ) : (
@@ -301,23 +327,24 @@ export function Navbar() {
         </div>
       </nav>
 
-      {isFloating && primaryTask ? (
-        <div className="mx-auto hidden max-w-7xl px-4 pb-3 sm:px-6 lg:block lg:px-8">
-          <Link href={primaryTask.route} className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200 backdrop-blur hover:bg-white/12">
-            Featured surface
-            <span>{primaryTask.label}</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-      ) : null}
-
       {isMobileMenuOpen && (
         <div className={style.mobile}>
           <div className="space-y-2 px-4 py-4">
-            <Link href="/search" onClick={() => setIsMobileMenuOpen(false)} className="mb-3 flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm font-semibold text-muted-foreground">
-              <Search className="h-4 w-4" />
-              Search the site
-            </Link>
+            <div className="mb-3 rounded-2xl border border-[#8CC7C4]/35 bg-white px-3 py-3">
+              <SiteSearchForm showSubmitButton placeholder="Search the site" onNavigate={() => setIsMobileMenuOpen(false)} />
+            </div>
+            <div className="flex flex-wrap gap-2 px-1 pb-2">
+              {staticNavLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="rounded-full border border-[#8CC7C4]/35 bg-white px-3 py-1.5 text-xs font-semibold text-[#2C687B]"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
             {mobileNavigation.map((item) => {
               const isActive = pathname.startsWith(item.href)
               return (
