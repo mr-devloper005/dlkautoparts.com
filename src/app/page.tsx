@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Bookmark, Building2, Compass, FileText, Globe2, Image as ImageIcon, LayoutGrid, MapPin, ShieldCheck, Tag, User } from 'lucide-react'
+import { ArrowRight, Bookmark, Compass, FileText, Image as ImageIcon, ShieldCheck } from 'lucide-react'
 import { ContentImage } from '@/components/shared/content-image'
+import { DirectoryHeroSearch } from '@/components/shared/site-search-form'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { SchemaJsonLd } from '@/components/seo/schema-jsonld'
@@ -30,15 +31,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 type EnabledTask = (typeof SITE_CONFIG.tasks)[number]
 type TaskFeedItem = { task: EnabledTask; posts: SitePost[] }
-
-const taskIcons: Record<TaskKey, any> = {
-  article: FileText,
-  listing: Building2,
-  sbm: Bookmark,
-  classified: Tag,
-  image: ImageIcon,
-  profile: User,
-}
 
 function resolveTaskKey(value: unknown, fallback: TaskKey): TaskKey {
   if (value === 'listing' || value === 'classified' || value === 'article' || value === 'image' || value === 'profile' || value === 'sbm') return value
@@ -74,27 +66,27 @@ function getPostMeta(post?: SitePost | null) {
 function getDirectoryTone(brandPack: string) {
   if (brandPack === 'market-utility') {
     return {
-      shell: 'bg-[#f5f7f1] text-[#1f2617]',
-      hero: 'bg-[linear-gradient(180deg,#eef4e4_0%,#f8faf4_100%)]',
-      panel: 'border border-[#d5ddc8] bg-white shadow-[0_24px_64px_rgba(64,76,34,0.08)]',
-      soft: 'border border-[#d5ddc8] bg-[#eff3e7]',
-      muted: 'text-[#5b664c]',
-      title: 'text-[#1f2617]',
-      badge: 'bg-[#1f2617] text-[#edf5dc]',
-      action: 'bg-[#1f2617] text-[#edf5dc] hover:bg-[#2f3a24]',
-      actionAlt: 'border border-[#d5ddc8] bg-white text-[#1f2617] hover:bg-[#eef3e7]',
+      shell: 'bg-[#FFF6F6] text-[#2C687B]',
+      hero: 'bg-[linear-gradient(180deg,#FFF6F6_0%,#f0faf9_100%)]',
+      panel: 'border border-[#8CC7C4]/35 bg-white shadow-[0_24px_64px_rgba(44,104,123,0.08)]',
+      soft: 'border border-[#8CC7C4]/30 bg-[#FFF6F6]',
+      muted: 'text-[#2C687B]/75',
+      title: 'text-[#2C687B]',
+      badge: 'bg-[#DB1A1A] text-white',
+      action: 'bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+      actionAlt: 'border border-[#8CC7C4]/40 bg-white text-[#2C687B] hover:bg-[#8CC7C4]/12',
     }
   }
   return {
-    shell: 'bg-[#f8fbff] text-slate-950',
-    hero: 'bg-[linear-gradient(180deg,#eef6ff_0%,#ffffff_100%)]',
-    panel: 'border border-slate-200 bg-white shadow-[0_24px_64px_rgba(15,23,42,0.08)]',
-    soft: 'border border-slate-200 bg-slate-50',
-    muted: 'text-slate-600',
-    title: 'text-slate-950',
-    badge: 'bg-slate-950 text-white',
-    action: 'bg-slate-950 text-white hover:bg-slate-800',
-    actionAlt: 'border border-slate-200 bg-white text-slate-950 hover:bg-slate-100',
+    shell: 'bg-[#FFF6F6] text-[#2C687B]',
+    hero: 'bg-[linear-gradient(180deg,#FFF6F6_0%,#f5fcfb_100%)]',
+    panel: 'border border-[#8CC7C4]/35 bg-white shadow-[0_24px_64px_rgba(44,104,123,0.08)]',
+    soft: 'border border-[#8CC7C4]/30 bg-white',
+    muted: 'text-[#2C687B]/75',
+    title: 'text-[#2C687B]',
+    badge: 'bg-[#DB1A1A] text-white',
+    action: 'bg-[#DB1A1A] text-white hover:bg-[#c41515]',
+    actionAlt: 'border border-[#8CC7C4]/40 bg-white text-[#2C687B] hover:bg-[#8CC7C4]/12',
   }
 }
 
@@ -137,9 +129,8 @@ function getCurationTone() {
   }
 }
 
-function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPosts, profilePosts, brandPack }: {
+function DirectoryHome({ primaryTask, listingPosts, classifiedPosts, profilePosts, brandPack }: {
   primaryTask?: EnabledTask
-  enabledTasks: EnabledTask[]
   listingPosts: SitePost[]
   classifiedPosts: SitePost[]
   profilePosts: SitePost[]
@@ -148,7 +139,6 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
   const tone = getDirectoryTone(brandPack)
   const featuredListings = (listingPosts.length ? listingPosts : classifiedPosts).slice(0, 3)
   const featuredTaskKey: TaskKey = listingPosts.length ? 'listing' : 'classified'
-  const quickRoutes = enabledTasks.slice(0, 4)
 
   return (
     <main>
@@ -165,13 +155,15 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
               </h1>
               <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
 
-              <div className={`mt-8 grid gap-3 rounded-[2rem] p-4 ${tone.panel} md:grid-cols-[1.25fr_0.8fr_auto]`}>
-                <div className="rounded-full bg-black/5 px-4 py-3 text-sm">What do you need today?</div>
-                <div className="rounded-full bg-black/5 px-4 py-3 text-sm">Choose area or city</div>
-                <Link href={primaryTask?.route || '/listings'} className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
-                  Browse now
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+              <div className={`mt-8 rounded-[2rem] p-5 ${tone.panel}`}>
+                <DirectoryHeroSearch />
+                <p className={`mt-4 text-sm ${tone.muted}`}>
+                  Or{' '}
+                  <Link href={primaryTask?.route || '/listings'} className="font-semibold text-[#DB1A1A] underline-offset-4 hover:underline">
+                    browse all listings
+                  </Link>
+                  .
+                </p>
               </div>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -198,19 +190,6 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
                   <ShieldCheck className="h-6 w-6" />
                 </div>
                 <p className={`mt-4 text-sm leading-7 ${tone.muted}`}>{primaryTask?.description || 'Structured discovery for services, offers, and business surfaces.'}</p>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                {quickRoutes.map((task) => {
-                  const Icon = taskIcons[task.key as TaskKey] || LayoutGrid
-                  return (
-                    <Link key={task.key} href={task.route} className={`rounded-[1.6rem] p-5 ${tone.soft}`}>
-                      <Icon className="h-5 w-5" />
-                      <h3 className="mt-4 text-lg font-semibold">{task.label}</h3>
-                      <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{task.description}</p>
-                    </Link>
-                  )
-                })}
               </div>
             </div>
           </div>
@@ -522,7 +501,6 @@ export default async function HomePage() {
       {productKind === 'directory' ? (
         <DirectoryHome
           primaryTask={primaryTask}
-          enabledTasks={enabledTasks}
           listingPosts={listingPosts}
           classifiedPosts={classifiedPosts}
           profilePosts={profilePosts}
