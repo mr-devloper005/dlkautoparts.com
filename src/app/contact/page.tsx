@@ -15,7 +15,7 @@ const channels = [
   {
     icon: Mail,
     title: 'Email',
-    detail: 'support@dlkautoparts.com',
+    detail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'support@dlkautoparts.com',
     sub: 'Quotes, order issues, and vendor onboarding',
   },
   {
