@@ -1,5 +1,5 @@
 export const siteIdentity = {
-  code: process.env.NEXT_PUBLIC_SITE_CODE || 'dlkautoparts',
+  code: process.env.NEXT_PUBLIC_SITE_CODE || 'da8m4q7v2x',
   name: process.env.NEXT_PUBLIC_SITE_NAME || 'DLK Auto Parts',
   tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Business listing platform',
   description:
