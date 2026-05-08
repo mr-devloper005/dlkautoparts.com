@@ -22,10 +22,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    const storedUser = loadFromStorage<User | null>(storageKeys.user, null)
-    if (storedUser) {
-      setUser(storedUser)
+    // Load user from our custom local storage format
+    const loadUserFromStorage = () => {
+      if (typeof window !== 'undefined') {
+        const userSession = localStorage.getItem('userSession')
+        const isLoggedIn = localStorage.getItem('isLoggedIn')
+        
+        if (userSession && isLoggedIn === 'true') {
+          try {
+            const userData = JSON.parse(userSession)
+            setUser({
+              id: userData.id,
+              name: userData.fullName || userData.name || userData.email?.split('@')[0] || 'User',
+              email: userData.email,
+              avatar: undefined,
+              joinedDate: new Date(userData.createdAt || userData.loginTime).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+              }),
+              followers: 0,
+              following: 0,
+              isVerified: false,
+            })
+          } catch (error) {
+            console.error('Failed to parse user session:', error)
+            // Clear corrupted data
+            localStorage.removeItem('userSession')
+            localStorage.removeItem('isLoggedIn')
+          }
+        }
+      }
     }
+
+    loadUserFromStorage()
+
+    // Listen for auth state changes from login/register pages
+    const handleAuthStateChange = () => {
+      loadUserFromStorage()
+    }
+
+    window.addEventListener('authStateChanged', handleAuthStateChange)
+    return () => window.removeEventListener('authStateChanged', handleAuthStateChange)
   }, [])
 
   const buildUser = useCallback((overrides: Partial<User>) => {
@@ -67,7 +104,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     setUser(null)
     if (typeof window !== 'undefined') {
+      // Clear both old and new storage formats
       window.localStorage.removeItem(storageKeys.user)
+      window.localStorage.removeItem('userSession')
+      window.localStorage.removeItem('isLoggedIn')
     }
   }, [])
 
