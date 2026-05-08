@@ -90,9 +90,6 @@ const directoryPalette = {
 const staticNavLinks = [
   { name: 'About', href: '/about' },
   { name: 'Contact', href: '/contact' },
-  { name: 'Terms', href: '/terms' },
-  { name: 'Privacy', href: '/privacy' },
-  { name: 'Help', href: '/help' },
 ] as const
 
 export function Navbar() {
