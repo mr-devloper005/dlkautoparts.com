@@ -42,7 +42,7 @@ export function NavbarAuthControls() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56 border-[#8CC7C4]/35 bg-[#FFF6F6]">
           {SITE_CONFIG.tasks.filter((task) => task.enabled).map((task) => {
-            const Icon = taskIcons[task.key] || LayoutGrid
+            const Icon = taskIcons[task.key] || User
             return (
               <DropdownMenuItem key={task.key} asChild>
                 <Link href={`/create/${task.key}`}>
@@ -64,7 +64,7 @@ export function NavbarAuthControls() {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56 border-[#8CC7C4]/35 bg-[#FFF6F6]">
+        <DropdownMenuContent align="end" className="w-64 border-[#8CC7C4]/35 bg-[#FFF6F6]">
           <div className="flex items-center gap-3 p-3">
             <Avatar className="h-10 w-10 border border-[#8CC7C4]/40">
               <AvatarImage src={user?.avatar} alt={user?.name} />

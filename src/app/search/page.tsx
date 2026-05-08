@@ -120,8 +120,6 @@ export default async function SearchPage({
                 <span>Total results</span>
                 <strong>{results.length}</strong>
               </div>
-              <div className={`px-3 py-2 ${ui.chip}`}>{category || 'All categories'}</div>
-              <div className={`px-3 py-2 ${ui.chip}`}>{task || 'All content types'}</div>
             </div>
           </aside>
 

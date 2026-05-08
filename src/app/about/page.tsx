@@ -29,11 +29,6 @@ const milestones = [
   { year: '2026', label: 'Today', detail: 'One platform for discovery, comparison, and direct outreach—still tuned for real-world shop workflows.' },
 ]
 
-const stats = [
-  { value: '12k+', label: 'SKU families indexed' },
-  { value: '480+', label: 'Verified seller profiles' },
-  { value: '24h', label: 'Typical quote response goal' },
-]
 
 export default function AboutPage() {
   return (
@@ -106,25 +101,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mt-14 rounded-[2rem] border border-[#8CC7C4]/35 bg-white p-8 sm:p-10">
-        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#DB1A1A]">Snapshot</p>
-            <h2 className="mt-3 text-2xl font-semibold">Numbers that reflect real usage—not vanity metrics.</h2>
-          </div>
-          <Button variant="outline" className="w-fit rounded-full border-[#8CC7C4]/50" asChild>
-            <Link href="/help">Read the help center</Link>
-          </Button>
-        </div>
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl bg-[#FFF6F6] px-6 py-8 text-center">
-              <p className="text-3xl font-semibold text-[#DB1A1A]">{s.value}</p>
-              <p className="mt-2 text-sm text-[#2C687B]/75">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-    </MarketingPageShell>
+          </MarketingPageShell>
   )
 }
