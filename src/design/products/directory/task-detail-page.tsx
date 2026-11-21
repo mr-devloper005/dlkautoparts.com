@@ -123,15 +123,6 @@ export function DirectoryTaskDetailPage({
               ) : null}
             </article>
 
-            {mapEmbedUrl ? (
-              <div className={`overflow-hidden rounded-2xl shadow-lg ${ui.detailPanel}`}>
-                <div className="px-8 py-5">
-                  <p className={`text-[11px] font-semibold uppercase tracking-[0.2em] ${ui.eyebrow}`}>Location</p>
-                  <h2 className={`mt-2 text-2xl font-semibold ${ui.title}`}>Find us on the map</h2>
-                </div>
-                <iframe src={mapEmbedUrl} title={`${post.title} map`} className="h-[350px] w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-              </div>
-            ) : null}
           </div>
 
           <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
